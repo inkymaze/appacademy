@@ -1,15 +1,15 @@
-require_relative 'piece'
-require 'byebug'
+require_relative 'piece_list'
 
 class Board
   attr_reader :grid
+  attr_accessor :black_king, :white_king
 
   def initialize
     @null = NullPiece.instance
     @grid = Array.new(8) { Array.new(8) { @null } }
     make_starting_grid
-    @black_king = self[7,4]
-    @white_king = self[0,4]
+    @black_king = @grid[7][4]
+    @white_king = @grid[0][4]
   end
 
   def []=(pos, value)
@@ -23,66 +23,86 @@ class Board
   end
 
   def dup
-    copy = self.dup
-    copy.grid.each do |row|
-      row = row.dup
-      row.each do |piece|
-        piece = piece.dup
-        piece.board = copy
+    copy = Board.new
+    @grid.flatten.each do |piece|
+      unless piece.is_a? NullPiece
+        pos = piece.pos
+        color = piece.color
+        new_piece = piece.class.new(copy, pos, color)
+        copy[pos] = new_piece
       end
     end
-    copy 
+    copy.black_king = @black_king
+    copy.white_king = @white_king
+    copy
   end
 
   def in_check?(color)
     king_pos = find_king_color(color)
-    @grid.each do |row|
-      row.each do |tile|
-        if tile.valid_moves.include?(king_pos) && tile.color != color
-          return true
-        end
+    @grid.flatten.any? do |tile|
+      if tile.is_a? NullPiece
+        false
+      elsif tile.color == color
+        false
+      elsif tile.moves.include?(king_pos)
+        true
+      else
+        false
       end
     end
-    false
   end
 
   def checkmate?(color)
+    @grid.flatten.all? do |piece|
+      piece.color != color && piece.valid_moves.empty?
+    end
   end
 
   def in_bounds(pos)
-    pos.each do |el|
-      return false unless el.between?(0,7)
+    pos.all? { |el| el.between?(0, 7) }
+  end
+
+  def move_piece(color, start_pos, end_pos)
+    piece = self[start_pos]
+    if piece.is_a?(NullPiece)
+      puts "No piece there"
+      return false
     end
+
+    unless piece.color == color
+      puts "That piece belongs to your enemy"
+      return false
+    end
+
+    unless piece.valid_moves.include?(end_pos)
+      puts "That #{piece.class.name} cannot move there"
+      return false
+    end
+
+    move_piece!(start_pos, end_pos)
     true
   end
 
-  #def move_piece(color, from_pos, to_pos)
-  #end
-
-
-  def move_piece(start_pos, end_pos)
-    if self[start_pos]==nil
-      raise ArgumentError.new("No piece at start position!")
-    end
+  def move_piece!(start_pos, end_pos)
     self[end_pos] = self[start_pos]
-    self[start_pos] = nil
+    self[end_pos].pos = end_pos
+    self[start_pos] = NullPiece.instance
   end
 
   def blocked?(tile, side)
     occupant = self[tile]
     if occupant.is_a?(NullPiece)
-      nil
+      :empty
     elsif occupant.color == side
-      true
+      :ally
     else
-      false
+      :enemy
     end
   end
 
   protected
 
   def setup_helper(hash, columns, type)
-
     columns.each do |col|
       hash.each do |key, color|
         pos = [key, col]
@@ -102,14 +122,13 @@ class Board
 
     hash = { 1 => :white, 6 => :black }
     setup_helper(hash, (0..7).to_a, Pawn)
-
   end
 
   def find_king_color(color)
     if color == :white
-      @white_king
+      @white_king.pos
     else
-      @black_king
+      @black_king.pos
     end
   end
 
