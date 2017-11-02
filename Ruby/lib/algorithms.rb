@@ -3,23 +3,65 @@
 # Keep repeating until there is only one digit in the result.
 # The result is called a 'digital root'.
 # Do not use string conversion within your method.
-def digital_root(number)
+#recursive
+# def digital_root(num)
+#   return num if num < 10
+#   digital_root(num % 10 + num / 10)
+#
+# end
 
+#iterative
+def digital_root(num)
+  while num > 9
+    root = 0
+    while num > 0
+      root += num % 10
+      num = num / 10
+    end
+    num = root
+  end
+  num
 end
+
 
 # Write a function that takes a message and an increment amount.
 # Output the same letters shifted by that amount in the alphabet.
 # Assume lowercase and no punctuation.
 # Preserve spaces.
 def caesar_cipher(string, shift)
-
+  abc = ('a'..'z').to_a
+  result = ""
+  string.each_char do |l|
+    if l == " "
+      result += l
+    else
+      old_idx = abc.index(l)
+      new_idx = (old_idx + shift) % 26
+      result += abc[new_idx]
+    end
+  end
+  result
 end
 
 # Write a function that takes two strings.
 # Return the longest common substring.
 def common_substrings(string_one, string_two)
-
+  long = ""
+  i = 0
+  while i < string_one.length
+    len = long.length + 1
+    while (len + i) <= string_two.length
+      j = i + len
+      substring = string_two[i...j]
+      long = substring if string_one.include?(substring)
+      len += 1
+    end
+    i += 1
+  end
+  long
 end
+
+
 
 # Write a function that takes an array of integers and returns their sum.
 # Use recursion.
@@ -51,25 +93,59 @@ end
 # It folds the alphabet in half and uses the adjacent letter.
 # a -> z, b -> y, c -> x, m -> n, etc...
 def folding_cipher(string)
-
+  comp = {}
+  abc = ('a'..'z').to_a
+  abc.each_with_index do |el, i|
+    comp[el] = abc[25 - i]
+  end
+  string.chars.map {|ltr| comp[ltr]}.join("")
 end
 
 # Write a method that finds all the unique substrings for a word.
 def uniq_subs(string)
-
+  subs = {}
+  string.length.times do |i|
+    (i...string.length).each do |j|
+      if !subs[string[i..j]]
+        subs[string[i..j]] = string[i..j]
+      end
+    end
+  end
+  subs.values
+  # O(N^3)
 end
 
 # Given an array of integers find the largest contiguous subsum.
 # You can solve this trivially in O(n**2) time by considering all subarrays.
 # Try to solve it in O(n) time with O(1) memory.
 def lcs(array)
+  running_sum = 0
+  max = nums.first || 0
 
+  nums.each do |n|
+    running_sum += n
+    max = running_sum if max < running_sum
+    running_sum = 0 if running_sum < 0
+  end
+  max
 end
 
 # Write a function that takes a year as a four digit integer.
 # Returns an array of the 10 closest subsequent silly years.
 # A silly year's first two digits plus the last two digits equal the middle two.
 def silly_years(year)
+  res = []
+  cur_year = year + 1
+  until res.size == 10
+    nums = cur_year.to_s.split("")
+    first = nums[0,2].join("").to_i
+
+    mid = nums[1,2].join("").to_i
+    last = nums[2,2].join("").to_i
+    res << cur_year if first + last == mid
+    cur_year += 1
+  end
+  res
 
 end
 
@@ -78,7 +154,25 @@ end
 # List the pairs in [min, max] order.
 # Time complexity: O(n).
 # Return a set.
+require 'set'
 def pair_sum(array, k)
+  comps = {}
+  array.each do |n|
+    key = k - n < n ? (k - n) : n
+
+    comps[k - n] = n
+  end
+
+  res = Set.new
+  array.each do |m|
+    if comps[m]
+      tuple  = comps[m] < m ? [comps[m], m] : [m, comps[m]]
+      res.add(tuple)
+
+    end
+  end
+  res
+
 
 end
 
@@ -277,5 +371,5 @@ end
 
 # Write a method that takes an array and returns all its permutations.
 def permutations(array)
-  
+
 end
