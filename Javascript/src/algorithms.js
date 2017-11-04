@@ -37,8 +37,14 @@ Algorithms.fibs = function (number) {
 
 // Write a function that takes a string and returns true if it's a palindrome, false if it's not.
 // Your solution should take less time and memory than rebuilding the string backward and comparing the two.
+// O(n) and O(1) space 
 Algorithms.isPalindrome = function (string) {
-
+  let len = string.length
+  for (let idx = 0; idx < len/2; idx++) {
+    if (string[idx] != string[len - 1 - idx])
+    return false
+  }
+  return true
 };
 
 // Implement the Folding Cipher.

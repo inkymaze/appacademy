@@ -116,8 +116,8 @@ describe 'merge_sort' do
 end
 
 describe 'binary_search' do
-  it '([1, 5, 13, 23, 305, 333, 402, 454, 500], 13) should return 2' do
-    expect(binary_search([1, 5, 13, 23, 305, 333, 402, 454, 500], 13)).to eq(2)
+  it '([1, 5, 13, 23, 305, 333, 402, 454, 500,501], 501) should return 9' do
+    expect(binary_search([1, 5, 13, 23, 305, 333, 402, 454, 500, 501], 501)).to eq(9)
   end
 
   it "should return nil if the target isn't found" do

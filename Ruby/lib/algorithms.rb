@@ -66,20 +66,34 @@ end
 # Write a function that takes an array of integers and returns their sum.
 # Use recursion.
 def sum_rec(numbers)
-
+  return 0 if numbers.size < 1
+  last = numbers.pop
+  sum_rec(numbers) + last
 end
 
 # Write a function that takes n, the length of the sequence.
 # Return the first n elements from the fibonnacci sequence as an array.
 def fibs(n)
+  return [] if n == 0
+  return [0] if n == 1
+  return [0,1] if n == 2
 
+  prev_fibs = fibs(n - 1)
+  prev_fibs << prev_fibs[-1] + prev_fibs[-2]
+  prev_fibs
 end
 
 # Write a function that takes a string.
 # Return true if the string is a palindrome, otherwise return false.
 # It should take less time and memory than reversing the string.
 def is_palindrome?(string)
-
+  mid = string.length / 2
+  (0...mid).each do |i|
+    if string[i] != string[string.length - 1 - i]
+      return  false
+    end
+  end
+  true
 end
 
 # Write a method that takes a string as input.
@@ -159,7 +173,6 @@ def pair_sum(array, k)
   comps = {}
   array.each do |n|
     key = k - n < n ? (k - n) : n
-
     comps[k - n] = n
   end
 
@@ -168,12 +181,9 @@ def pair_sum(array, k)
     if comps[m]
       tuple  = comps[m] < m ? [comps[m], m] : [m, comps[m]]
       res.add(tuple)
-
     end
   end
   res
-
-
 end
 
 # Take a matrix of integers and coordinates.
@@ -181,41 +191,88 @@ end
 # Find the sum of numbers falling inside the rectangle.
 # Time complexity: O(number of rows * number of columns).
 def matrix_region_sum(matrix, top_left_coords, bottom_right_coords)
-
+  sum = 0
+  (top_left_coords[0]..bottom_right_coords[0]).each do |row|
+    (top_left_coords[1]..bottom_right_coords[1]).each do |col|
+      sum += matrix[row][col]
+    end
+  end
+  sum
 end
 
 # Implement Merge Sort
 # Hint: This typically involves a helper function.
 def merge_sort(array)
+  return array if array.size <= 1
 
+  mid = array.size / 2
+  sorted_left = merge_sort(array[0...mid])
+  sorted_right = merge_sort(array[mid..-1])
+  merge(sorted_left,sorted_right)
 end
 
 def merge(left, right)
-
+  res = []
+  until left.empty? || right.empty?
+    res << ((left[0] < right[0]) ? left.shift : right.shift)
+  end
+  res + left + right
 end
 
 # Implement binary search.
 # Return nil if the target isn't found.
 def binary_search(array, target)
-
+  return nil if array.empty?
+  mid = array.size / 2
+  case target <=> array[mid]
+  when -1
+    binary_search(array[0...mid], target )
+  when 0
+    mid
+  when 1
+    sub_bin = binary_search(array[(mid+1)..-1], target)
+    sub_bin.nil? ? nil : (mid+1) + sub_bin
+  end
 end
+
+
+
+
+
 
 # You are given a list of numbers in an array.
 # Replace all the numbers with the product of all other numbers.
 # Do this in O(n) time without using division.
 def productify(array)
+  res = Array.new(array.length, 1 )
+  lower = 1
+  (0...(array.size)).each do |i|
+    res[i] = res[i] * lower
+    lower *= array[i]
+  end
 
+  upper = 1
+  (array.size - 1).downto(0) do |j|
+    res[j] = res[j] * upper
+    upper *= array[j]
+  end
+  res
 end
 
 # Write a function that takes an array and returns all of its subsets.
 def subsets(array)
+  return [[]] if array.empty?
 
+  val = array.shift
+  subs = subsets(array)
+  new_subs = subs.map { |sub| sub + [val]  }
+  subs + new_subs
 end
 
 # Return the indices of the start/end of the longest palindrome in the string.
 # You could reverse the string and compare it to the original, but that is slow.
 # Instead, you should be able to solve the problem with O(1) memory.
-def longest_palindrome(string)
+def longest_palindrome(s)
 
 end
 
@@ -232,13 +289,43 @@ end
 # Don't generate all subsets of both arrays, which would be exponential time.
 # Instead, directly generate the subsets of both.
 def common_subsets(array_one, array_two)
+  shortest = array_one.size > array_two.size ? array_two : array_one
+  longest = array_one.size > array_two.size ? array_one : array_two
 
+  long__nums = Hash.new(0)
+
+  longest.each do |n|
+    long__nums[n] += 1
+  end
+  shared_nums = []
+
+  shortest.each do |n|
+    if long__nums[n] > 0
+      shared_nums << n
+      long__nums[n] -= 1
+    end
+  end
+
+  subsets(shared_nums)
 end
 
 # You are given an array and index.
 # Find if it's possible to reach 0 by starting at the index.
 # You can only move left or right by the distance found at array[index].
 def can_win?(array, index)
+  before = index
+  after = index
+
+  while before > 0 || after < array.size
+    before = array[before - array[index]]
+    after = array[after + array[index]]
+    if array[before] && array[before] == 0
+      return true
+    elsif array[after] && array[after] == 0
+      return true 
+    end
+  end
+  false
 
 end
 
