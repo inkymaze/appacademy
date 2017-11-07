@@ -339,13 +339,13 @@ def sort2(array, max_value)
   array.each do |n|
     hash[n] += 1
   end
-  out = []
+  result = []
   (1..max_value).each do |m|
     if hash[m] > 0
-      out << m
+      result << m
     end
   end
-  out 
+  result 
 end
 
 # Say I give you an array of n strings, each of length k.
