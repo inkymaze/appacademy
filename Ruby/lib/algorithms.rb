@@ -235,11 +235,6 @@ def binary_search(array, target)
   end
 end
 
-
-
-
-
-
 # You are given a list of numbers in an array.
 # Replace all the numbers with the product of all other numbers.
 # Do this in O(n) time without using division.
@@ -322,7 +317,7 @@ def can_win?(array, index)
     if array[before] && array[before] == 0
       return true
     elsif array[after] && array[after] == 0
-      return true 
+      return true
     end
   end
   false
@@ -333,14 +328,24 @@ end
 # "Sort" this array in O(n) time.
 # Hint: You should be able to do this without looking at the input.
 def sort1(array)
-
+  (1..array.size).to_a
 end
 
 # Assume an array of length n with numbers in the range 1..N (N >= n).
 # Sort this array in O(n + N) time.
 # You may use O(N) memory.
 def sort2(array, max_value)
-
+  hash= Hash.new(0)
+  array.each do |n|
+    hash[n] += 1
+  end
+  out = []
+  (1..max_value).each do |m|
+    if hash[m] > 0
+      out << m
+    end
+  end
+  out 
 end
 
 # Say I give you an array of n strings, each of length k.
