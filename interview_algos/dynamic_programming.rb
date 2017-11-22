@@ -35,10 +35,9 @@ def composeRanges(nums)
   head = nums[i]
  end
  if head != tail
-    result << "#{tail}->#{head}"
-  else
-    result << "#{tail}"
+   result << "#{tail}->#{head}"
+ else
+  result << "#{tail}"
  end
  result
-
 end
