@@ -9,24 +9,21 @@ function printHelp() {
 
 var args = require("minimist")(process.argv.slice(2), { string: "file" });
 
-if (args.help || !args.file) {
-  printHelp();
-  process.exit(1);
-}
 
 
-var hello = require("./helloworld.js");
+
+var hello = require("./helloworld3.js");
 
 // var contents = hello.say(args.file);
 
-// callback is given an error as the first argument as convention
-hello.say(args.file, function(err,contents){
-  if (err){
+// .val is a sync step that replaces .then
+hello.say(args.file)
+  .val(function(contents) {
+    console.log(contents.toString());
+  })
+  .or(function(err){
     console.error("Error " + err);
-  } else {
+  });
 
-  console.log(contents.toString());
-}
-});
 
 // add toString to prevent logging array buffer

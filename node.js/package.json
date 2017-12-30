@@ -1,0 +1,26 @@
+{
+  "name": "helloworld",
+  "version": "0.0.1-a",
+  "description": "hello world",
+  "main": "./helloworld3.js",
+  "dependencies": {
+  
+    "minimist": "~0.0.8"
+  },
+  "keywords": [
+    "hello",
+    "world"
+  ],
+  "author": "This guy",
+  "license": "MIT"
+}
+
+
+/*  tilda dependencies indicates that you will allow versions that are patch updates only  */
+
+/*  dependencies will be pulled down when installed from NPM as well */
+
+/* npm publish helloworld */
+/*  then npm install helloworld */
+/*  afterwords helloworld can be required liek so : require("helloworld")*/ 
+
